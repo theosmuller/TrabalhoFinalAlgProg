@@ -241,7 +241,6 @@ void gera_paredes(int num_paredes, int num_segmentos, int parede_x, int parede_y
                 if(parede_x == *jogador_x && parede_y == *jogador_y)
                 {
                     *jogador_x-= 1;
-
                 }
             }
             break;
@@ -275,113 +274,149 @@ void gera_paredes(int num_paredes, int num_segmentos, int parede_x, int parede_y
     }
 }
 
+void desenha_chaves(int *chave_x[NUMCHAVES], int *chave_y[NUMCHAVES], int chaves, char status, char simboloChave)
+{
+    srand(time(NULL));
+    int i, j;
+
+    for(i=0; i<NUMCHAVES; i++)
+    {
+        *chave_x[i] = rand() % (MAXX + 1 -  2) + 2;
+        *chave_y[i] = rand() % (MAXY + 1 -  2) + 2;
+
+          for(j=0; j<NUMCHAVES; j++)
+            {
+                textbackground(YELLOW);
+                putchxy(*chave_x[i], *chave_y[i], '   ');
+                textbackground(YELLOW);
+
+            }
+    }
+
+}
+
+void testa_chaves(int *chave_x[NUMCHAVES], int *chave_y[NUMCHAVES], int *jogador_x, int *jogador_y, int nomeJogador, int *chavesColetadas, int vidas, int tempoJogo, int modo_de_jogo) {
+
+int i=0;
+
+for(i=0; i<NUMCHAVES; i++){
+ if(*chave_x[i] == *jogador_x && *chave_y[i] == *jogador_y)
+                {
+                    *chavesColetadas +=1;
+                    desenha_placar(nomeJogador, *chavesColetadas, vidas, tempoJogo, modo_de_jogo);
+                }
+}
+}
 
 // A partir daqui so declaro estruturas
-struct Jogador
-{
-    int jogador_x;
-    int jogador_y;
-    int vidas;
-    int chavesColetadas;
-    char nomeJogador[NOME];
-    float tempoJogo;
+    struct Jogador
+    {
+        int jogador_x;
+        int jogador_y;
+        int vidas;
+        int chavesColetadas;
+        char nomeJogador[NOME];
+        float tempoJogo;
 
-};
+    };
 
-struct Guarda
-{
-    int guarda_x;
-    int guarda_y;
+    struct Guarda
+    {
+        int guarda_x;
+        int guarda_y;
 
-};
+    };
 
-struct Chaves
-{
-    char simboloChave;
-    int chave_x, chave_y;
-    char status;
-    int chave[NUMCHAVES];
-};
+    struct Chaves
+    {
+        char simboloChave;
+        char status;
+        int chaves;
+    };
 
-int main()
-{
-
-    struct Jogador Jogador;
-    struct Guarda Guarda;
-    struct Chaves Chaves;
-    int ch;
-    int tecla;
-    int num_paredes = 5;
-    int num_segmentos = 5;
-    int parede_x = 0;
-    int parede_y = 0;
-    int modo_de_jogo = 0;
-    srand(time(NULL));
-    Jogador.tempoJogo = 0;
-    Jogador.chavesColetadas = 0;
-    Jogador.vidas = 3;
-    Guarda.guarda_x = MAXX - 5;
-    Guarda.guarda_y = MAXY - 5;
-    Jogador.jogador_x = 4;
-    Jogador.jogador_y = 4;
-
-    Jogador.jogador_x = 2 + rand() % (MAXX - 2);
-    Jogador.jogador_y = 2 + rand() % (MAXY - 2);
-    Guarda.guarda_x = 2 + rand() % (MAXX - 2);
-    Guarda.guarda_y = 2 + rand() % (MAXY - 2);
-
-
-
-    time_t start, stop;
-    clock_t ticks;
-    long count;
-
-
-
-    do
+    int main()
     {
 
+        struct Jogador Jogador;
+        struct Guarda Guarda;
+        struct Chaves Chaves;
+        int ch;
+        int tecla;
+        int num_paredes = 5;
+        int num_segmentos = 5;
+        int parede_x = 0;
+        int parede_y = 0;
+        int modo_de_jogo = 0;
+         int chave_x[NUMCHAVES] = {};
+        int chave_y[NUMCHAVES] = {};
+        srand(time(NULL));
+        Jogador.tempoJogo = 0;
+        Jogador.chavesColetadas = 0;
+        Jogador.vidas = 3;
+        Guarda.guarda_x = MAXX - 5;
+        Guarda.guarda_y = MAXY - 5;
+        Jogador.jogador_x = 4;
+        Jogador.jogador_y = 4;
+
+        Jogador.jogador_x = 2 + rand() % (MAXX - 2);
+        Jogador.jogador_y = 2 + rand() % (MAXY - 2);
+        Guarda.guarda_x = 2 + rand() % (MAXX - 2);
+        Guarda.guarda_y = 2 + rand() % (MAXY - 2);
 
 
-        puts("Insira o nome do jogador");
-        gets(Jogador.nomeJogador);
-        clrscr();
 
-        escolherModoJogo(&num_paredes, &num_segmentos, &modo_de_jogo);
-
-        iniciaJogo(&Jogador.jogador_x, &Jogador.jogador_y, &ch);
-
-        time(&start);
+        time_t start, stop;
+        clock_t ticks;
+        long count;
 
 
-        desenha_placar(Jogador.nomeJogador, Jogador.chavesColetadas, Jogador.vidas, Jogador.tempoJogo, modo_de_jogo);
-        desenha_cenario(MAXX, MAXY);
-        desenha_jogador(Jogador.jogador_x, Jogador.jogador_y);
-        desenha_guarda(Guarda.guarda_x, Guarda.guarda_y);
-        gera_paredes(num_paredes, num_segmentos, parede_x, parede_y, &Jogador.jogador_x, &Jogador.jogador_y);
 
         do
         {
-            testa_agentes(Guarda.guarda_x, Guarda.guarda_y, &Jogador.jogador_x, &Jogador.jogador_y, Jogador.nomeJogador, Jogador.chavesColetadas, &Jogador.vidas, Jogador.tempoJogo, modo_de_jogo);
-            if(kbhit())
+
+
+
+            puts("Insira o nome do jogador");
+            gets(Jogador.nomeJogador);
+            clrscr();
+
+            escolherModoJogo(&num_paredes, &num_segmentos, &modo_de_jogo);
+
+            iniciaJogo(&Jogador.jogador_x, &Jogador.jogador_y, &ch);
+
+            time(&start);
+
+
+            desenha_placar(Jogador.nomeJogador, Jogador.chavesColetadas, Jogador.vidas, Jogador.tempoJogo, modo_de_jogo);
+            desenha_cenario(MAXX, MAXY);
+            desenha_jogador(Jogador.jogador_x, Jogador.jogador_y);
+            desenha_guarda(Guarda.guarda_x, Guarda.guarda_y);
+            gera_paredes(num_paredes, num_segmentos, parede_x, parede_y, &Jogador.jogador_x, &Jogador.jogador_y);
+            desenha_chaves(&chave_x[NUMCHAVES], &chave_y[NUMCHAVES], Chaves.chaves, Chaves.status,Chaves.simboloChave);
+
+            do
             {
-                tecla = getch();
-                movimenta_jogador(&Jogador.jogador_x, &Jogador.jogador_y, tecla);
+                testa_agentes(Guarda.guarda_x, Guarda.guarda_y, &Jogador.jogador_x, &Jogador.jogador_y, Jogador.nomeJogador, Jogador.chavesColetadas, &Jogador.vidas, Jogador.tempoJogo, modo_de_jogo);
+                testa_chaves(&chave_x[NUMCHAVES], &chave_y[NUMCHAVES], &Jogador.jogador_x, &Jogador.jogador_y, Jogador.nomeJogador, &Jogador.chavesColetadas, Jogador.vidas, Jogador.tempoJogo, modo_de_jogo);
+                if(kbhit())
+                {
+                    tecla = getch();
+                    movimenta_jogador(&Jogador.jogador_x, &Jogador.jogador_y, tecla);
+                }
+
             }
+            while(Jogador.vidas > 0);
 
         }
-        while(Jogador.vidas > 0);
+        while(Jogador.vidas > 0 && ch != 27);
 
+        time(&stop);
+
+        clrscr();
+        printf("\n\t\t\tVoce perdeu!\n\n");
+        printf("\nTempo de jogo: %.2f segundos",  difftime(stop, start));
+
+
+        return(0);
     }
-    while(Jogador.vidas > 0 && ch != 27);
-
-    time(&stop);
-
-    clrscr();
-    printf("\n\t\t\tVoce perdeu!\n\n");
-    printf("\nTempo de jogo: %.2f segundos",  difftime(stop, start));
-
-
-    return(0);
-}
 
